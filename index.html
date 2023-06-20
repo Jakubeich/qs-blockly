@@ -1,0 +1,36 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QS blockly</title>
+  <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
+  <script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
+  <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
+  <script src="https://unpkg.com/blockly/msg/js/en.js"></script>
+  <script src="https://unpkg.com/blockly/variable.js"></script>
+  <script src="https://unpkg.com/blockly/variable_model.js"></script>
+</head>
+<body>
+  <xml id="toolbox" style="display: none">
+    <category name="Variables" colour="330">
+      <block type="variables_set_int"></block>
+      <block type="variables_set_long"></block>
+      <block type="variables_set_float"></block>
+      <block type="variables_set_double"></block>
+      <block type="variables_set_string"></block>
+    </category>
+    <category name="Logic" colour="210">
+      <block type="controls_if"></block>
+      <block type="logic_compare"></block>
+    </category>
+    <category name="Loops" colour="120">
+      <block type="controls_repeat_ext"></block>
+    </category>
+  </xml>
+  <div id="blocklyDiv"></div>
+  <button id="runButton">Run</button>
+  <div id="outputDiv"></div>
+  <script src="main.js"></script>
+</body>
+</html>
