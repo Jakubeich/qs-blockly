@@ -1,11 +1,5 @@
-body,
-html {
-    margin: 1;
-    padding: 1;
-}
-
 #blocklyDiv {
-  height: 55%;
+  height: 56.5%;
   width: 35%;
   display: inline-block;
 }

@@ -281,9 +281,6 @@ Blockly.Blocks['variables_get'] = {
             case ("int"):
                 this.changeOutput(dist+'_INT');
                 break;
-            case ("unsigned int"):
-                this.changeOutput(dist+'_UNINT');
-                break;
             case ("float"):
                 this.changeOutput(dist+'_FLOAT');
                 break;
@@ -368,7 +365,6 @@ Blockly.Blocks['variables_declare'] = {
         var TYPE =
             [
                 [Blockly.Msg.VARIABLES_SET_TYPE_INT, 'int'],
-                [Blockly.Msg.VARIABLES_SET_TYPE_UNSIGNED_INT, 'unsigned int'],
                 [Blockly.Msg.VARIABLES_SET_TYPE_FLOAT, 'float'],
                 [Blockly.Msg.VARIABLES_SET_TYPE_DOUBLE, 'double'],
                 [Blockly.Msg.VARIABLES_SET_TYPE_CHAR, 'char']];
