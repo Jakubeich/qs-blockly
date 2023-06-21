@@ -1,36 +1,144 @@
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QS blockly</title>
-  <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
-  <script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
-  <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
-  <script src="https://unpkg.com/blockly/msg/js/en.js"></script>
-  <script src="https://unpkg.com/blockly/variable.js"></script>
-  <script src="https://unpkg.com/blockly/variable_model.js"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <xml id="toolbox" style="display: none">
-    <category name="Variables" colour="330">
-      <block type="variables_set_int"></block>
-      <block type="variables_set_long"></block>
-      <block type="variables_set_float"></block>
-      <block type="variables_set_double"></block>
-      <block type="variables_set_string"></block>
+
+<body onload="start()">
+  <xml id="toolbox">
+    <category name="Variables">
+      <block type="variables_declare"></block>
+      <block type="variables_get"></block>
+      <block type="variables_set"></block>
     </category>
-    <category name="Logic" colour="210">
+    <category name="Arithmetics">
+      <block type="math_number"></block>
+      <block type="math_arithmetic"></block>
+      <block type="math_modulo"></block>
+    </category>
+    <category name="Loops">
+      <block type="controls_whileUntil"></block>
+      <block type="controls_doWhile"></block>
+      <block type="controls_for"></block>
+      <block type="controls_flow_statements"></block>
+    </category>
+    <category name="Logic">
       <block type="controls_if"></block>
+      <block type="controls_switch"></block>
+      <block type="controls_switch_break"></block>
       <block type="logic_compare"></block>
+      <block type="logic_operation"></block>
+      <block type="logic_negate"></block>
+      <block type="logic_boolean"></block>
+      <block type="logic_null"></block>
+      <block type="logic_ternary"></block>
     </category>
-    <category name="Loops" colour="120">
-      <block type="controls_repeat_ext"></block>
+    <category name="Functions" custom="PROCEDURE">
+      <block type="procedures_defnoreturn"></block>
+      <block type="procedures_defreturn"></block>
+      <block type="procedures_ifreturn"></block>
+    </category>
+    </category>
+    <!-- <category name="Structure" custom="STRUCTURE">
+      <block type="structure_define"></block>
+      <block type="structure_declare"></block>
+    </category> -->
+    <category name="Library">
+      <category name="Stdio">
+        <block type="library_stdio_printf"></block>
+        <block type="library_stdio_text"></block>
+        <block type='library_stdio_newLine'></block>
+        <block type="library_stdio_scanf"></block>
+      </category>
+      <category name="Stdlib">
+        <block type="library_stdlib_convert"></block>
+        <block type="library_stdlib_rand">
+          <value name="VAR">
+            <block type="library_stdlib_rand_scope">
+              <value name="A">
+                <block type="library_stdlib_number_forRandScope1"></block>
+              </value>
+              <value name="B">
+                <block type="library_stdlib_number_forRandScope100"></block>
+              </value>
+            </block>
+          </value>
+        </block>
+        <block type="library_stdlib_malloc">
+          <value name="VAR">
+            <block type="library_stdlib_arithmetic_forMalloc">
+              <value name="A">
+                <block type="library_stdlib_sizeof_forMalloc"></block>
+              </value>
+              <value name="B">
+                <block type="library_stdlib_number_forMalloc"></block>
+              </value>
+            </block>
+          </value>
+        </block>
+        <block type="library_stdlib_arithmetic_forMalloc">
+          <value name="A">
+            <block type="library_stdlib_sizeof_forMalloc"></block>
+          </value>
+          <value name="B">
+            <block type="library_stdlib_number_forMalloc"></block>
+          </value>
+        </block>
+        <block type="library_stdlib_free"></block>
+        <block type="library_stdlib_exit"></block>
+      </category>
+      <category name="String">
+        <block type="library_string_strlen"></block>
+        <block type="library_string_strcat"></block>
+        <block type="library_string_strcpy"></block>
+        <block type="library_string_strcmp"></block>
+      </category>
+      <category name="Math">
+        <block type="library_math_abs"></block>
+        <block type="library_math_trig"></block>
+        <block type="library_math_logs"></block>
+        <block type="library_math_pow"></block>
+        <block type="library_math_exp"></block>
+        <block type="library_math_sqrt"></block>
+        <block type="library_math_round"></block>
+        <block type="library_math_numcheck"></block>
+        <block type="library_math_numcompare"></block>
+      </category>
+      <category name="Time">
+        <block type="library_time_current"></block>
+        <block type="library_time_requiredTime"></block>
+      </category>
+    </category>
+    <category name="Others">
+      <block type='comment'>
+        <value name="VAR0">
+          <block type="library_stdio_text"></block>
+        </value>
+      </block>
+      <block type="library_stdio_text"></block>
+      <block type="math_number"></block>
+      <block type="define_declare"></block>
+      <block type="define_get"></block>
     </category>
   </xml>
   <div id="blocklyDiv"></div>
-  <button id="runButton">Run</button>
-  <div id="outputDiv"></div>
-  <script src="main.js"></script>
+  <pre id="code" class="panel-body pre-scrollable"></pre>
+  <script type="text/javascript" src="blockly_compressed.js"></script>
+  <script type="text/javascript" src="blocks_compressed.js"></script>
+  <script type="text/javascript" src="cake_compressed.js"></script>
+  <script type="text/javascript" src="msg/js/en.js"></script>
+  <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/main.js"></script>
+  <script type="text/javascript" src="js/FileSaver.js"></script>
+  <script type="text/javascript" src="js/prettify.js"></script>
+  <script type="text/javascript" src="js/jquery.mousewheel.min.js"></script>
+  <script type="text/javascript" src="js/jquery.terminal-0.8.8.min.js"></script>
+  <script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
 </body>
+
 </html>
