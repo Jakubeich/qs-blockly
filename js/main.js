@@ -92,7 +92,7 @@ Blockly.Blocks['variables_get'] = {
 Blockly.Blocks['func_init'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("int init");
+        .appendField("int init:");
     this.appendStatementInput("func_init")
         .setCheck(null);
     this.appendValueInput("return_data")
@@ -110,7 +110,7 @@ Blockly.Blocks['func_init'] = {
 Blockly.Blocks['func_update'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("int update");
+        .appendField("int update:");
     this.appendStatementInput("func_update")
         .setCheck(null);
     this.appendValueInput("return_data")
@@ -128,7 +128,7 @@ Blockly.Blocks['func_update'] = {
 Blockly.Blocks['func_shutdown'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("int shutdown");
+        .appendField("int shutdown:");
     this.appendStatementInput("func_shutdown")
         .setCheck(null);
     this.appendValueInput("return_data")
@@ -172,7 +172,10 @@ qscriptGenerator['variables_declare'] = function(block) {
   var varName = block.getFieldValue('varName');
   var varType = block.getFieldValue('varType');
 
-  return varType + ' ' + varName + ' = ' + argument0 + ';\n';
+  var nextBlock = block.getNextBlock();
+  var nextCode = nextBlock ? qscriptGenerator.blockToCode(nextBlock) : '';
+
+  return code = varType + ' ' + varName + ' = ' + argument0 + ';\n' + nextCode;
 };
 
 qscriptGenerator['variables_get'] = function(block) {
@@ -185,11 +188,14 @@ qscriptGenerator['func_init'] = function(block) {
   var varType = block.getFieldValue('VAR');
   var returnDataBlock = block.getInputTargetBlock('return_data');
   var returnData = returnDataBlock ? qscriptGenerator.blockToCode(returnDataBlock)[0] : getDefaultReturn(varType);
+
+  var nextBlock = block.getNextBlock();
+  var nextCode = nextBlock ? '\n' + qscriptGenerator.blockToCode(nextBlock) : '';
   
   var code = 'int init() {\n' +
              statements_func_init +
              '  return ' + returnData + ';\n' +
-             '}\n';
+             '}\n' + nextCode;
 
   return code;
 };
@@ -200,10 +206,13 @@ qscriptGenerator['func_update'] = function(block) {
   var returnDataBlock = block.getInputTargetBlock('return_data');
   var returnData = returnDataBlock ? qscriptGenerator.blockToCode(returnDataBlock)[0] : getDefaultReturn(varType);
   
+  var nextBlock = block.getNextBlock();
+  var nextCode = nextBlock ? '\n' + qscriptGenerator.blockToCode(nextBlock) : '';
+
   var code = 'int update() {\n' +
              statements_func_update +
              '  return ' + returnData + ';\n' +
-             '}\n';
+             '}\n' + nextCode;
 
   return code;
 };
@@ -214,10 +223,13 @@ qscriptGenerator['func_shutdown'] = function(block) {
   var returnDataBlock = block.getInputTargetBlock('return_data');
   var returnData = returnDataBlock ? qscriptGenerator.blockToCode(returnDataBlock)[0] : getDefaultReturn(varType);
   
+  var nextBlock = block.getNextBlock();
+  var nextCode = nextBlock ? '\n' + qscriptGenerator.blockToCode(nextBlock) : '';
+
   var code = 'int shutdown() {\n' +
              statements_func_shutdown +
              '  return ' + returnData + ';\n' +
-             '}\n';
+             '}\n' + nextCode;
 
   return code;
 };
