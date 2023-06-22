@@ -13,19 +13,19 @@
     <category name="Variables">
       <block type="variables_declare"></block>
       <block type="variables_get"></block>
-      <block type="variables_set"></block>
+      <!-- <block type="variables_set"></block> -->
     </category>
     <category name="Arithmetics">
       <block type="math_number"></block>
-      <block type="math_arithmetic"></block>
-      <block type="math_modulo"></block>
+      <!-- <block type="math_arithmetic"></block>
+      <block type="math_modulo"></block> -->
     </category>
     <category name="Loops">
-      <block type="controls_whileUntil"></block>
+      <!-- <block type="controls_whileUntil"></block>
       <block type="controls_doWhile"></block>
-      <block type="controls_for"></block>
-      <block type="controls_flow_statements"></block>
+      <block type="controls_for"></block> -->
     </category>
+    <!--
     <category name="Logic">
       <block type="controls_if"></block>
       <block type="controls_switch"></block>
@@ -43,10 +43,6 @@
       <block type="procedures_ifreturn"></block>
     </category>
     </category>
-    <!-- <category name="Structure" custom="STRUCTURE">
-      <block type="structure_define"></block>
-      <block type="structure_declare"></block>
-    </category> -->
     <category name="Library">
       <category name="Stdio">
         <block type="library_stdio_printf"></block>
@@ -68,34 +64,6 @@
             </block>
           </value>
         </block>
-        <block type="library_stdlib_malloc">
-          <value name="VAR">
-            <block type="library_stdlib_arithmetic_forMalloc">
-              <value name="A">
-                <block type="library_stdlib_sizeof_forMalloc"></block>
-              </value>
-              <value name="B">
-                <block type="library_stdlib_number_forMalloc"></block>
-              </value>
-            </block>
-          </value>
-        </block>
-        <block type="library_stdlib_arithmetic_forMalloc">
-          <value name="A">
-            <block type="library_stdlib_sizeof_forMalloc"></block>
-          </value>
-          <value name="B">
-            <block type="library_stdlib_number_forMalloc"></block>
-          </value>
-        </block>
-        <block type="library_stdlib_free"></block>
-        <block type="library_stdlib_exit"></block>
-      </category>
-      <category name="String">
-        <block type="library_string_strlen"></block>
-        <block type="library_string_strcat"></block>
-        <block type="library_string_strcpy"></block>
-        <block type="library_string_strcmp"></block>
       </category>
       <category name="Math">
         <block type="library_math_abs"></block>
@@ -112,27 +80,22 @@
         <block type="library_time_current"></block>
         <block type="library_time_requiredTime"></block>
       </category>
-    </category>
+    </category> -->
     <category name="Others">
-      <block type='comment'>
-        <value name="VAR0">
-          <block type="library_stdio_text"></block>
-        </value>
-      </block>
-      <block type="library_stdio_text"></block>
+      <block type="text"></block>
       <block type="math_number"></block>
-      <block type="define_declare"></block>
-      <block type="define_get"></block>
+      <!-- <block type="define_declare"></block>
+      <block type="define_get"></block> -->
     </category>
   </xml>
   <div id="blocklyDiv"></div>
   <div class="codeDiv">
     <pre id="code"></pre>
   </div>
-  <script type="text/javascript" src="blockly_compressed.js"></script>
-  <script type="text/javascript" src="blocks_compressed.js"></script>
-  <script type="text/javascript" src="cake_compressed.js"></script>
-  <script type="text/javascript" src="msg/js/en.js"></script>
+  <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
+  <script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.5/highlight.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.5/styles/default.min.css">
   <script type="text/javascript" src="js/main.js"></script>
   <script type="text/javascript" src="js/prettify.js"></script>
 </body>
