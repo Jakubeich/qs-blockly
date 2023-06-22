@@ -1,12 +1,13 @@
 #blocklyDiv {
-  height: 56.5%;
-  width: 35%;
+  height: 60%;
+  width: 50%;
   display: inline-block;
+  vertical-align: top;
 }
 
-#code {
-  height: 55%;
-  width: 20%;
+.codeDiv {
+  height: 60%;
+  width: 22%;
   border: 1px solid black;
   display: inline-block;
 }

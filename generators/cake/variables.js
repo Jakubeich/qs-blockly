@@ -80,6 +80,12 @@ Blockly.cake['variables_declare'] = function(block) {
     if (Blockly.Blocks.checkLegalName(Blockly.Msg.VARIABLES_ILLEGALNAME, varName) == -1){
         this.initVar();
     }
+
+    // Check if type is string, if so, add quotes around argument0.
+    if (varType === 'string' && !/^\".*\"$/.test(argument0)) {
+        argument0 = '"' + argument0 + '"';
+    }
+
     return varType + ' ' + varName + ' = ' + argument0 + ';\n';
 };
 

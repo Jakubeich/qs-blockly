@@ -477,6 +477,7 @@ Blockly.Msg.VARIABLES_SET_TYPE_UNSIGNED_INT= 'unsigned int';
 Blockly.Msg.VARIABLES_SET_TYPE_FLOAT = 'real number(float)';
 Blockly.Msg.VARIABLES_SET_TYPE_DOUBLE = 'real number(double)';
 Blockly.Msg.VARIABLES_SET_TYPE_CHAR= 'character';
+Blockly.Msg.VARIABLES_SET_TYPE_STRING= 'string';
 Blockly.Msg.VARIABLES_SET_ITERATION_NORMAL = '*';
 Blockly.Msg.VARIABLES_SET_ITERATION_DOUBLE = '**';
 Blockly.Msg.VARIABLES_SET_ITERATION_TRIPLE = '***';

@@ -367,7 +367,7 @@ Blockly.Blocks['variables_declare'] = {
                 [Blockly.Msg.VARIABLES_SET_TYPE_INT, 'int'],
                 [Blockly.Msg.VARIABLES_SET_TYPE_FLOAT, 'float'],
                 [Blockly.Msg.VARIABLES_SET_TYPE_DOUBLE, 'double'],
-                [Blockly.Msg.VARIABLES_SET_TYPE_CHAR, 'char']];
+                [Blockly.Msg.VARIABLES_SET_TYPE_STRING, 'string']];
         this.setColour(350);
         var name = Blockly.Procedures.findLegalName(
             Blockly.Msg.VARIABLES_DECLARE_DEFAULT_NAME, this);
@@ -465,7 +465,11 @@ Blockly.Blocks['variables_declare'] = {
         }
 
         //if (this.getInputTargetBlock('VALUE')) {
-            Blockly.Blocks.setCheckVariable(this, type, 'VALUE');
+            if (type === 'string') {
+                Blockly.Blocks.setCheckVariable(this, ['String', 'Number'], 'VALUE');
+            } else {
+                Blockly.Blocks.setCheckVariable(this, type, 'VALUE');
+            }
         //}
 
     }
