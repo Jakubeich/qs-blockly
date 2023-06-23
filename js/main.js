@@ -42,34 +42,19 @@ Blockly.Blocks['variables_declare'] = {
     this.setColour(230);
     this.setTooltip("");
     this.setHelpUrl("");
-  },
-  onchange: function(event) {
-    if (event.type == Blockly.Events.BLOCK_CHANGE && event.element == 'field') {
-      let varName = this.getFieldValue('varName');
-      let varType = this.getFieldValue('varType');
-      let newVariable = workspace.createVariable(varName, varType);
-  
-      // Aktualizujeme pole FieldVariable všech bloků 'variables_get'.
-      let allBlocks = workspace.getAllBlocks();
-      for(let block of allBlocks) {
-        if(block.type === 'variables_get') {
-          let fieldVariable = block.getField('VAR');
-          if(fieldVariable) {
-            fieldVariable.setValue(newVariable.getId());
-          }
-        }
-      }
-    }
   }
 };
 
 Blockly.Blocks['variables_get'] = {
   init: function() {
     var dropdown = new Blockly.FieldDropdown(function() {
-      let variables = workspace.getAllVariables();
+      let blocks = workspace.getAllBlocks();
       let options = [];
-      for(let variable of variables) {
-        options.push([variable.name, variable.name]);
+      for(let block of blocks) {
+        if(block.type === 'variables_declare') {
+          let varName = block.getFieldValue('varName');
+          options.push([varName, varName]);
+        }
       }
 
       if (options.length === 0) {
@@ -171,11 +156,12 @@ qscriptGenerator['variables_declare'] = function(block) {
   var argument0 = targetBlock ? qscriptGenerator.blockToCode(targetBlock)[0] : '0';
   var varName = block.getFieldValue('varName');
   var varType = block.getFieldValue('varType');
-
   var nextBlock = block.getNextBlock();
   var nextCode = nextBlock ? qscriptGenerator.blockToCode(nextBlock) : '';
 
-  return code = varType + ' ' + varName + ' = ' + argument0 + ';\n' + nextCode;
+  workspace.createVariable(varName, varType);
+
+  return varType + ' ' + varName + ' = ' + argument0 + ';\n' + nextCode;
 };
 
 qscriptGenerator['variables_get'] = function(block) {
@@ -193,7 +179,7 @@ qscriptGenerator['func_init'] = function(block) {
   var nextCode = nextBlock ? '\n' + qscriptGenerator.blockToCode(nextBlock) : '';
   
   var code = 'int init() {\n' +
-             statements_func_init +
+             statements_func_init + '\n' +
              '  return ' + returnData + ';\n' +
              '}\n' + nextCode;
 
@@ -210,7 +196,7 @@ qscriptGenerator['func_update'] = function(block) {
   var nextCode = nextBlock ? '\n' + qscriptGenerator.blockToCode(nextBlock) : '';
 
   var code = 'int update() {\n' +
-             statements_func_update +
+             statements_func_update + '\n' +
              '  return ' + returnData + ';\n' +
              '}\n' + nextCode;
 
@@ -227,13 +213,12 @@ qscriptGenerator['func_shutdown'] = function(block) {
   var nextCode = nextBlock ? '\n' + qscriptGenerator.blockToCode(nextBlock) : '';
 
   var code = 'int shutdown() {\n' +
-             statements_func_shutdown +
+             statements_func_shutdown + '\n' +
              '  return ' + returnData + ';\n' +
              '}\n' + nextCode;
 
   return code;
 };
-
 qscriptGenerator['math_number'] = function(block) {
   var number = block.getFieldValue('VALUE');
   return [number];
