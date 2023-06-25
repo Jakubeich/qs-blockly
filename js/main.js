@@ -1,11 +1,19 @@
 const qscriptGenerator = new Blockly.Generator('QScript');
 
 let workspace;
+let isFullscreen = false;
 
 function start() {
   workspace = Blockly.inject('blocklyDiv', {
     toolbox: document.getElementById('toolbox'),
-    variableTypes: ['int', 'long', 'float', 'string']
+    zoom: {
+      controls: true,
+      wheel: true,
+      startScale: 1.0,
+      maxScale: 3,
+      minScale: 0.3,
+      scaleSpeed: 1.2
+    }
   });
 
   const xmlText = '<xml xmlns="http://www.w3.org/1999/xhtml">' + 
@@ -26,6 +34,33 @@ function renderContent() {
   content.textContent = code;
   hljs.highlightBlock(content);
 }
+
+function toggleFullscreen() {
+  const blocklyDiv = document.getElementById('blocklyDiv');
+  const codeDiv = document.querySelector('.codeDiv');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+  if (isFullscreen) {
+    blocklyDiv.style.height = '60%';
+    blocklyDiv.style.width = '50%';
+    blocklyDiv.style.display = 'inline-block';
+
+    codeDiv.style.display = 'inline-block';
+    fullscreenBtn.innerText = 'Fullscreen';
+  } else {
+    blocklyDiv.style.height = '95%';
+    blocklyDiv.style.width = '70%';
+    blocklyDiv.style.display = 'inline-block';
+
+    codeDiv.style.display = 'inline-block';
+    fullscreenBtn.innerText = 'Exit Fullscreen';
+  }
+
+  isFullscreen = !isFullscreen;
+  Blockly.svgResize(workspace);
+}
+
+document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
 
 Blockly.Blocks['variables_declare'] = {
   init: function() {
