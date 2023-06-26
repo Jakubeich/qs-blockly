@@ -62,6 +62,8 @@ function toggleFullscreen() {
 
 document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
 
+///////////////////////////////////////////////////////////////////////// BLOCKS DEFINITIONS /////////////////////////////////////////////////////////////////////////
+
 Blockly.Blocks['variables_declare'] = {
   init: function() {
     var input = this.appendValueInput("NAME")
@@ -148,11 +150,28 @@ Blockly.Blocks['variables_set'] = {
   }
 };
 
+Blockly.Blocks['procedures_defreturn'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("name")
+        .appendField(new Blockly.FieldTextInput("myFunction"), "NAME")
+    this.appendStatementInput("DO")
+        .setCheck(null);
+    this.appendValueInput("return_data")
+      .setCheck(null)
+      .appendField("return variable")
+      .appendField(new Blockly.FieldDropdown([["int","int"], ["long","long"], ["float","float"], ["string","string"]]), "VAR")
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(120);
+  }
+};
+
 Blockly.Blocks['func_init'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("int init:");
-    this.appendStatementInput("func_init")
+    this.appendStatementInput("func_init", "NAME")
         .setCheck(null);
     this.appendValueInput("return_data")
         .setCheck(null)
@@ -170,7 +189,7 @@ Blockly.Blocks['func_update'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("int update:");
-    this.appendStatementInput("func_update")
+    this.appendStatementInput("func_update", "NAME")
         .setCheck(null);
     this.appendValueInput("return_data")
         .setCheck(null)
@@ -188,7 +207,7 @@ Blockly.Blocks['func_shutdown'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("int shutdown:");
-    this.appendStatementInput("func_shutdown")
+    this.appendStatementInput("func_shutdown", "NAME")
         .setCheck(null);
     this.appendValueInput("return_data")
         .setCheck(null)
@@ -243,14 +262,19 @@ Blockly.Blocks['text'] = {
   }
 };
 
-Blockly.Blocks['functions_return'] = {
+Blockly.Blocks['functions_get'] = {
   init: function() {
-    let dropdown = new Blockly.FieldDropdown(function() {
+    var dropdown = new Blockly.FieldDropdown(function() {
+      let options = [
+        ["func_init", "func_init"],
+        ["func_update", "func_update"],
+        ["func_shutdown", "func_shutdown"]
+      ];
+
       let blocks = workspace.getAllBlocks();
-      let options = [];
       for(let block of blocks) {
-        if(['func_init', 'func_update', 'func_shutdown'].includes(block.type)) {
-          let funcName = block.type.split('_')[1];
+        if(block.type === 'procedures_defreturn') {
+          let funcName = block.getFieldValue('NAME');
           options.push([funcName, funcName]);
         }
       }
@@ -404,6 +428,251 @@ Blockly.Blocks['controls_doWhile'] = {
   }
 };
 
+Blockly.Blocks['variables_declare_array'] = {
+  init: function() {
+    var input = this.appendValueInput("NAME")
+        .appendField("array, type")
+        .appendField(new Blockly.FieldDropdown([["int","int"], ["long","long"], ["float","float"]]), "varType")
+        .appendField("name")
+        .appendField(new Blockly.FieldTextInput("myArray"), "varName")
+        .appendField("lenght");
+    this.appendDummyInput();
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(260);
+ this.setTooltip("");
+ this.setHelpUrl("");
+
+  this.getField('varType').setValidator(function(option) {
+    var checkType = option === 'string' ? 'string' : ['int', 'float', 'long'];
+    input.setCheck(checkType);
+  });
+  }
+};
+
+Blockly.Blocks['variables_get_array'] = {
+  init: function() {
+    var dropdown = new Blockly.FieldDropdown(function() {
+      let blocks = workspace.getAllBlocks();
+      let options = [];
+      for(let block of blocks) {
+        if(block.type === 'variables_declare_array') {
+          let varName = block.getFieldValue('varName');
+          options.push([varName, varName]);
+        }
+      }
+
+      if (options.length === 0) {
+        options.push(['', '']);
+      }
+
+      return options;
+    });
+
+    this.appendDummyInput()
+        .appendField("")
+        .appendField(dropdown, "VAR");
+    this.setOutput(true, null);
+    this.setColour(260);
+    this.setTooltip("");
+    this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['variables_set_array'] = {
+  init: function() {
+    var dropdown = new Blockly.FieldDropdown(function() {
+      let blocks = workspace.getAllBlocks();
+      let options = [];
+      for(let block of blocks) {
+        if(block.type === 'variables_declare_array') {
+          let varName = block.getFieldValue('varName');
+          options.push([varName, varName]);
+        }
+      }
+
+      if (options.length === 0) {
+        options.push(['', '']);
+      }
+
+      return options;
+    });
+
+    this.appendDummyInput()
+        .appendField("set")
+        .appendField(dropdown, "VAR")
+    this.appendDummyInput()
+        .appendField("to");
+    this.appendValueInput("VALUE")
+        .setCheck(null);
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(260);
+    this.setTooltip("");
+  }
+};
+
+Blockly.Blocks['array_length'] = {
+  init: function() {
+    var dropdown = new Blockly.FieldDropdown(function() {
+      let blocks = workspace.getAllBlocks();
+      let options = [];
+      for(let block of blocks) {
+        if(block.type === 'variables_declare_array') {
+          let varName = block.getFieldValue('varName');
+          options.push([varName, varName]);
+        }
+      }
+
+      if (options.length === 0) {
+        options.push(['', '']);
+      }
+
+      return options;
+    });
+
+    this.appendDummyInput()
+        .appendField("length of")
+        .appendField(dropdown, "VAR");
+    this.setOutput(true, null);
+    this.setColour(260);
+    this.setTooltip("");
+    this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['array_list'] = {
+  init: function() {
+    this.appendValueInput("VALUE")
+        .setCheck("int")
+        .appendField("create list with");
+
+    this.setMutator(new Blockly.Mutator(['array_list_item']));
+    this.itemCount_ = 0;
+
+    this.setOutput(true, null);
+    this.setColour(260);
+    this.setTooltip("");
+    this.setHelpUrl("");
+  },
+
+  mutationToDom: function() {
+    var container = document.createElement('mutation');
+    container.setAttribute('items', this.itemCount_);
+    return container;
+  },
+
+  domToMutation: function(xmlElement) {
+    this.itemCount_ = parseInt(xmlElement.getAttribute('items'), 10);
+    this.updateShape_();
+  },
+
+  decompose: function(workspace) {
+    var containerBlock = workspace.newBlock('array_list_container');
+    containerBlock.initSvg();
+    var connection = containerBlock.getInput('STACK').connection;
+    for (var i = 0; i < this.itemCount_; i++) {
+      var itemBlock = workspace.newBlock('array_list_item');
+      itemBlock.initSvg();
+      connection.connect(itemBlock.previousConnection);
+      connection = itemBlock.nextConnection;
+    }
+    return containerBlock;
+  },
+
+  compose: function(containerBlock) {
+    var itemBlock = containerBlock.getInputTargetBlock('STACK');
+    var connections = [];
+    while (itemBlock) {
+      connections.push(itemBlock.valueConnection_);
+      itemBlock = itemBlock.nextConnection && itemBlock.nextConnection.targetBlock();
+    }
+    this.itemCount_ = connections.length;
+    this.updateShape_();
+    for (var i = 1; i <= this.itemCount_; i++) {
+      var input = this.getInput('VALUE' + i);
+      if (input && connections[i - 1]) {
+          if (connections[i - 1].targetConnection) {
+              input.connection.connect(connections[i - 1].targetConnection);
+          } else {
+              connections[i - 1] = input.connection;
+          }
+      }
+    }
+  },
+  
+  saveConnections: function(containerBlock) {
+    var itemBlock = containerBlock.getInputTargetBlock('STACK');
+    var i = 0;
+    while (itemBlock) {
+      var input = this.getInput('VALUE' + i);
+      if (input) {
+        itemBlock.valueConnection_ = input.connection;
+      }
+      i++;
+      itemBlock = itemBlock.nextConnection && itemBlock.nextConnection.targetBlock();
+    }
+  },
+
+  updateShape_: function() {
+    for (var i = 0; i < this.itemCount_; i++) {
+      if (!this.getInput('VALUE' + (i + 1))) {
+        this.appendValueInput('VALUE' + (i + 1)).setCheck("int");
+      }
+    }
+    while (this.getInput('VALUE' + (this.itemCount_ + 1))) {
+      this.removeInput('VALUE' + (this.itemCount_ + 1));
+    }
+  },
+};
+
+Blockly.Blocks['array_list_container'] = {
+  init: function() {
+    this.setColour(260);
+    this.appendDummyInput()
+        .appendField("list items");
+    this.appendStatementInput('STACK');
+    this.contextMenu = false;
+  }
+};
+
+Blockly.Blocks['array_list_item'] = {
+  init: function() {
+    this.setColour(260);
+    this.appendDummyInput()
+        .appendField("item");
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.contextMenu = false;
+  }
+};
+
+///////////////////////////////////////////////////////////////////////// GENERATOR ///////////////////////////////////////////////////////////////////////// 
+
+qscriptGenerator['array_list'] = function(block) {
+  var inicial_block = block.getInputTargetBlock('VALUE');
+  var inicial_code = inicial_block ? qscriptGenerator.blockToCode(inicial_block)[0] : '0';
+  var i = 0;
+
+  var code = '( ' + inicial_code;
+  while (block.getInput('VALUE' + (i + 1))) {
+    var value_block = block.getInputTargetBlock('VALUE' + (i + 1));
+    var value_code = value_block ? qscriptGenerator.blockToCode(value_block)[0] : '0';
+    code += ', ' + value_code;
+    i++;
+  }
+
+  code += ' )';
+
+  return [code, qscriptGenerator.ORDER_ATOMIC];
+};
+
+qscriptGenerator['array_length'] = function(block) {
+  var varName = block.getFieldValue('VAR');
+  return [varName + '.length', qscriptGenerator.ORDER_ATOMIC];
+};
+
 qscriptGenerator['variables_declare'] = function(block) {
   var targetBlock = block.getInputTargetBlock('NAME');
   var argument0 = targetBlock ? qscriptGenerator.blockToCode(targetBlock)[0] : '0';
@@ -428,6 +697,62 @@ qscriptGenerator['variables_set'] = function(block) {
   var argument0 = argument ? qscriptGenerator.blockToCode(argument)[0] : '0';
   var code =  varName + ' = ' + argument0 + ';\n';
 
+  return code;
+};
+
+qscriptGenerator['variables_declare_array'] = function(block) {
+  var varName = block.getFieldValue('varName');
+  var varType = block.getFieldValue('varType');
+  var arrayLength = block.getInputTargetBlock('NAME');
+  var arrayLengthCode = arrayLength ? qscriptGenerator.blockToCode(arrayLength)[0] : '0';
+  var nextBlock = block.getNextBlock();
+  var nextCode = nextBlock ? qscriptGenerator.blockToCode(nextBlock) : '';
+
+  var code = varType + ' ' + varName + '[' + arrayLengthCode + '];\n' + nextCode;
+  return code;
+};
+
+qscriptGenerator['variables_get_array'] = function(block) {
+  var varName = block.getFieldValue('VAR');
+  var arrayLengthCode = getArrayLength(varName);
+
+  return [varName + "[" + arrayLengthCode + "]", qscriptGenerator.ORDER_ATOMIC];
+};
+
+qscriptGenerator['variables_set_array'] = function(block) {
+  var varName = block.getFieldValue('VAR');
+  var arrayLengthCode = getArrayLength(varName); 
+  var valueBlock = block.getInputTargetBlock('VALUE');
+  var value = valueBlock ? qscriptGenerator.blockToCode(valueBlock)[0] : '0';
+
+  var nextBlock = block.getNextBlock();
+  var nextCode = nextBlock ? '\n' + qscriptGenerator.blockToCode(nextBlock) : '';
+
+  var code = varName + "[" + arrayLengthCode + "]" + ' = ' + value + ';' + nextCode;
+  return code;
+};
+
+qscriptGenerator['functions_get'] = function(block) {
+  var funcName = block.getFieldValue('funcName')
+  return code = funcName + '();\n';
+};
+
+qscriptGenerator["procedures_defreturn"] = function(block) {
+  var funcName = block.getFieldValue('NAME');
+  var statements_do = qscriptGenerator.statementToCode(block, 'DO');
+  var varType = block.getFieldValue('VAR');
+  var returnDataBlock = block.getInputTargetBlock('return_data');
+
+  var returnData = returnDataBlock ? qscriptGenerator.blockToCode(returnDataBlock)[0] : getDefaultReturn(varType);
+
+  var nextBlock = block.getNextBlock();
+  var nextCode = nextBlock ? '\n' + qscriptGenerator.blockToCode(nextBlock) : '';
+
+  var code = "int" + ' ' + funcName + '() {\n' +
+              statements_do + '\n' +
+              '  return ' + returnData + ';\n' +
+              '}\n' + nextCode;
+  
   return code;
 };
 
@@ -519,13 +844,6 @@ qscriptGenerator['text'] = function(block) {
   var text = block.getFieldValue('VALUE');
   text = text.replace(/"/g, '\\"');
   return ['"' + text + '"', qscriptGenerator.ORDER_ATOMIC];
-};
-
-qscriptGenerator['functions_return'] = function(block) {
-  var funcName = block.getFieldValue('funcName');
-  var nextBlock = block.getNextBlock();
-  var nextCode = nextBlock ? qscriptGenerator.blockToCode(nextBlock) : '';
-  return funcName + '();\n' + nextCode;
 };
 
 qscriptGenerator['controls_switch'] = function(block) {
@@ -643,6 +961,7 @@ qscriptGenerator['controls_doWhile'] = function(block) {
   return code;
 };
 
+///////////////////////////////////////////////////////////////////////// Helper functions ///////////////////////////////////////////////////////////////////////// 
 function getDefaultReturn(varType) {
   switch (varType) {
     case 'string':
@@ -654,4 +973,15 @@ function getDefaultReturn(varType) {
     default:
       return 'null';
   }
+}
+
+function getArrayLength(varName) {
+  let blocks = workspace.getAllBlocks();
+  for(let block of blocks) {
+    if(block.type === 'variables_declare_array' && block.getFieldValue('varName') === varName) {
+      let arrayLength = block.getInputTargetBlock('NAME');
+      return arrayLength ? qscriptGenerator.blockToCode(arrayLength)[0] : '0';
+    }
+  }
+  return '0';
 }
