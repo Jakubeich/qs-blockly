@@ -344,30 +344,6 @@ Blockly.Blocks['logic_compare'] = {
   }
 };
 
-Blockly.Blocks['controls_switch'] = {
-  init: function() {
-    this.appendValueInput("SWITCH")
-        .setCheck(null)
-        .appendField("switch");
-    this.appendDummyInput()
-        .appendField("if there are no corresponding value");
-    this.appendStatementInput("DEFAULT_DO")
-        .setCheck(null)
-        .appendField("DO");
-    this.appendDummyInput()
-        .appendField("case");
-    this.appendStatementInput("CASE_DO")
-        .setCheck(null)
-        .appendField("DO");
-    this.setInputsInline(false);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(160);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
 Blockly.Blocks['controls_for'] = {
   init: function() {
     var dropdown = new Blockly.FieldDropdown(function() {
@@ -627,6 +603,126 @@ Blockly.Blocks['array_list'] = {
   },
 };
 
+Blockly.Blocks['controls_switch'] = {
+  init: function() {
+    this.appendValueInput("SWITCH")
+        .setCheck(null)
+        .appendField("switch");
+    this.appendDummyInput()
+        .appendField("if there are no corresponding value");
+    this.appendStatementInput("DEFAULT_DO")
+        .setCheck(null)
+        .appendField("DO");
+    this.appendDummyInput()
+        .appendField("case");
+    this.appendStatementInput("CASE_DO_1")
+        .setCheck(null)
+        .appendField("DO");
+
+    this.setMutator(new Blockly.Mutator(['controls_switch_case']));
+    this.caseCount_ = 1;
+
+    this.setInputsInline(false);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(160);
+    this.setTooltip("");
+    this.setHelpUrl("");
+  },
+
+  mutationToDom: function() {
+    var container = document.createElement('mutation');
+    container.setAttribute('cases', this.caseCount_);
+    return container;
+  },
+
+  domToMutation: function(xmlElement) {
+    this.caseCount_ = parseInt(xmlElement.getAttribute('cases'), 10);
+    this.updateShape_();
+  },
+
+  decompose: function(workspace) {
+    var containerBlock = workspace.newBlock('controls_switch_container');
+    containerBlock.initSvg();
+    var connection = containerBlock.getInput('STACK').connection;
+    for (var i = 1; i <= this.caseCount_; i++) {
+      var caseBlock = workspace.newBlock('controls_switch_case');
+      caseBlock.initSvg();
+      connection.connect(caseBlock.previousConnection);
+      connection = caseBlock.nextConnection;
+    }
+    return containerBlock;
+  },
+
+  compose: function(containerBlock) {
+    var caseBlock = containerBlock.getInputTargetBlock('STACK');
+    var connections = [];
+    while (caseBlock) {
+      connections.push(caseBlock.statementConnection_);
+      caseBlock = caseBlock.nextConnection && caseBlock.nextConnection.targetBlock();
+    }
+    this.caseCount_ = connections.length;
+    this.updateShape_();
+    for (var i = 1; i <= this.caseCount_; i++) {
+      var input = this.getInput('CASE_DO_' + i);
+      if (input && connections[i - 1]) {
+        if (connections[i - 1].targetConnection) {
+          input.connection.connect(connections[i - 1].targetConnection);
+        } else {
+          connections[i - 1] = input.connection;
+        }
+      }
+    }
+  },
+
+  saveConnections: function(containerBlock) {
+    var caseBlock = containerBlock.getInputTargetBlock('STACK');
+    var i = 1;
+    while (caseBlock) {
+      var input = this.getInput('CASE_DO_' + i);
+      if (input) {
+        caseBlock.statementConnection_ = input.connection;
+      }
+      i++;
+      caseBlock = caseBlock.nextConnection && caseBlock.nextConnection.targetBlock();
+    }
+  },
+
+  updateShape_: function() {
+    for (var i = 1; i <= this.caseCount_; i++) {
+      if (!this.getInput('CASE_DO_' + i)) {
+        this.appendStatementInput('CASE_DO_' + i)
+          .setCheck(null)
+          .appendField("DO");
+      }
+    }
+    while (this.getInput('CASE_DO_' + (this.caseCount_ + 1))) {
+      this.removeInput('CASE_DO_' + (this.caseCount_ + 1));
+    }
+  },
+};
+
+Blockly.Blocks['controls_switch_container'] = {
+  init: function() {
+    this.setColour(160);
+    this.appendDummyInput()
+        .appendField("cases");
+    this.appendStatementInput('STACK');
+    this.contextMenu = false;
+  }
+};
+
+Blockly.Blocks['controls_switch_case'] = {
+  init: function() {
+    this.setColour(160);
+    this.appendDummyInput()
+        .appendField("case");
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.contextMenu = false;
+  },
+};
+
 Blockly.Blocks['array_list_container'] = {
   init: function() {
     this.setColour(260);
@@ -849,13 +945,21 @@ qscriptGenerator['text'] = function(block) {
 qscriptGenerator['controls_switch'] = function(block) {
   var switch_block = block.getInputTargetBlock('SWITCH');
   var switch_code = switch_block ? qscriptGenerator.blockToCode(switch_block, 'SWITCH')[0] : '0';
+
   var default_do_code = qscriptGenerator.statementToCode(block, 'DEFAULT_DO');
-  var case_do_code = qscriptGenerator.statementToCode(block, 'CASE_DO');
 
-  default_do_code = '  ' + default_do_code.replace(/\n/g, '\n  ');
-  case_do_code = '  ' + case_do_code.replace(/\n/g, '\n  ');
+  var code = 'switch(' + switch_code + ') {\n' + '  default:\n' + '  ' + default_do_code;
 
-  var code = 'switch(' + switch_code + ') {\n' + '  default:\n' + default_do_code + 'case 1:\n' + case_do_code + '}\n';
+  // then set cases
+  var i = 1;
+  while (block.getInput('CASE_DO_' + i)) {
+    var case_do_code = qscriptGenerator.statementToCode(block, 'CASE_DO_' + i);
+    code += '  case ' + i + ':\n' + '    ' + case_do_code;
+    i++;
+  }
+
+  code += '}\n';
+  
   return code;
 };
 
